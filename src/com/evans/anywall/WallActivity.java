@@ -9,6 +9,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -122,6 +123,8 @@ public class WallActivity extends Activity {
 				location.getLongitude());
 		mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng, 18));
 		CircleOptions circleOptions = new CircleOptions().center(latlng)
+				.fillColor(0x330000FF)
+				.strokeColor(0x770000FF)
 				.radius(75); // In meters
 		// 300
 		// Get back the mutable Circle
