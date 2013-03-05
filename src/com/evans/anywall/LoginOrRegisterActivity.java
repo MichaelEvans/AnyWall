@@ -31,13 +31,13 @@ public class LoginOrRegisterActivity extends Activity {
 	public void registerClick(View v){
 		Intent i = new Intent(this, RegisterActivity.class);
 		startActivity(i);
-		finish();
+		//finish();
 	}
 	
 	public void loginClick(View v){
 		Intent i = new Intent(this, LoginActivity.class);
 		startActivity(i);
-		finish();
+		//finish();
 	}
 	
 }

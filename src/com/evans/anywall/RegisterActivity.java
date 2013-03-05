@@ -9,9 +9,11 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
@@ -48,6 +50,7 @@ public class RegisterActivity extends Activity {
 
 		setContentView(R.layout.activity_register);
 
+		getActionBar().setDisplayHomeAsUpEnabled(true);
 		// Set up the login form.
 		mEmailView = (EditText) findViewById(R.id.email);
 		mEmailView.setText(mEmail);
@@ -76,7 +79,7 @@ public class RegisterActivity extends Activity {
 					public void onClick(View view) {
 						Intent subActivity = new Intent(RegisterActivity.this,
 								LoginActivity.class);
-						
+
 						if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
 							startWithAnimation(subActivity);
 						else
@@ -100,6 +103,21 @@ public class RegisterActivity extends Activity {
 		return true;
 	}
 
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			Intent intent = new Intent(this, LoginOrRegisterActivity.class);
+			intent.addFlags(
+					Intent.FLAG_ACTIVITY_CLEAR_TOP |
+					Intent.FLAG_ACTIVITY_NEW_TASK);
+			NavUtils.navigateUpTo(this,
+					intent);
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
 	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 	private void startWithAnimation(Intent subActivity) {
 		Bundle translateBundle =
@@ -107,7 +125,7 @@ public class RegisterActivity extends Activity {
 						R.anim.slide_in_left, R.anim.slide_out_left).toBundle();
 		startActivity(subActivity, translateBundle);
 	}
-	
+
 	/**
 	 * Attempts to sign in or register the account specified by the login form.
 	 * If there are form errors (invalid email, missing fields, etc.), the
@@ -146,11 +164,11 @@ public class RegisterActivity extends Activity {
 			focusView = mEmailView;
 			cancel = true;
 		}
-//		else if (!mEmail.contains("@")) {
-//			mEmailView.setError(getString(R.string.error_invalid_email));
-//			focusView = mEmailView;
-//			cancel = true;
-//		}
+		//		else if (!mEmail.contains("@")) {
+		//			mEmailView.setError(getString(R.string.error_invalid_email));
+		//			focusView = mEmailView;
+		//			cancel = true;
+		//		}
 
 		if (cancel) {
 			// There was an error; don't attempt login and focus the first
@@ -234,6 +252,7 @@ public class RegisterActivity extends Activity {
 			if (success) {
 				Intent subActivity = new Intent(RegisterActivity.this,
 						WallActivity.class);
+				subActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 				// The enter/exit animations for the two activities are specified by xml resources
 				if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
 					startWithAnimation(subActivity);

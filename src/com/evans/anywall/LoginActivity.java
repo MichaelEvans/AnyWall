@@ -9,10 +9,12 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
@@ -48,6 +50,7 @@ public class LoginActivity extends Activity {
 
 		setContentView(R.layout.activity_login);
 
+		getActionBar().setDisplayHomeAsUpEnabled(true);
 		// Set up the login form.
 		mEmailView = (EditText) findViewById(R.id.email);
 		mEmailView.setText(mEmail);
@@ -100,6 +103,21 @@ public class LoginActivity extends Activity {
 		return true;
 	}
 
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			Intent intent = new Intent(this, LoginOrRegisterActivity.class);
+			intent.addFlags(
+					Intent.FLAG_ACTIVITY_CLEAR_TOP |
+					Intent.FLAG_ACTIVITY_NEW_TASK);
+			NavUtils.navigateUpTo(this,
+					intent);
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+	
 	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 	private void startWithAnimation(Intent subActivity) {
 		Bundle translateBundle =
@@ -250,6 +268,7 @@ public class LoginActivity extends Activity {
 			if (success) {
 				Intent subActivity = new Intent(LoginActivity.this,
                         WallActivity.class);
+				subActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 // The enter/exit animations for the two activities are specified by xml resources
 				if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
 					startWithAnimation(subActivity);

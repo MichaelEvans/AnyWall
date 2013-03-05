@@ -300,6 +300,7 @@ public class WallActivity extends Activity implements LocationListener{
 		ParseUser.logOut();
 		Intent i = new Intent(this, LoginOrRegisterActivity.class);
 		startActivity(i);
+		finish();
 	}
 
 	@Override
