@@ -43,7 +43,7 @@ import com.parse.ParseQuery.CachePolicy;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
-public class WallActivity extends Activity {
+public class WallActivity extends Activity implements LocationListener{
 
 	private ListView postList;
 	private GoogleMap mMap;
@@ -85,43 +85,22 @@ public class WallActivity extends Activity {
 		mLocationManager = (LocationManager) this
 				.getSystemService(Context.LOCATION_SERVICE);
 
-		// Define a listener that responds to location updates
-		mLocationListener = new LocationListener() {
-			public void onLocationChanged(Location location) {
-				// Called when a new location is found by the network location
-				// provider.
-				updateMap(location);
-				populateData();
-				//updateMarkers(location);
-			}
-
-			public void onStatusChanged(String provider, int status,
-					Bundle extras) {
-			}
-
-			public void onProviderEnabled(String provider) {
-			}
-
-			public void onProviderDisabled(String provider) {
-			}
-		};
-
 		// Register the listener with the Location Manager to receive location
 		// updates
 		mLocationManager.requestLocationUpdates(
-				LocationManager.NETWORK_PROVIDER, 5000, 25, mLocationListener);
+				LocationManager.NETWORK_PROVIDER, 50, 0, this);
 		//populateData();
 	}
 
 	protected void onStop() {
 		super.onStop();
-		mLocationManager.removeUpdates(mLocationListener);
+		mLocationManager.removeUpdates(this);
 	}
 
-	private void updateMap(Location location) {
+	private void updateCircle(Location location) {
 		LatLng latlng = new LatLng(location.getLatitude(),
 				location.getLongitude());
-		mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng, 18));
+		
 		CircleOptions circleOptions = new CircleOptions().center(latlng)
 				.fillColor(0x330000FF)
 				.strokeColor(0x770000FF)
@@ -129,6 +108,7 @@ public class WallActivity extends Activity {
 		// 300
 		// Get back the mutable Circle
 		if (mCircle == null) {
+			mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng, 17));
 			mCircle = mMap.addCircle(circleOptions);
 		} else {
 			mCircle.setCenter(latlng);
@@ -254,6 +234,9 @@ public class WallActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle item selection
 		switch (item.getItemId()) {
+		case R.id.menu_refresh:
+			//refreshData();
+			return true;
 		case R.id.menu_post:
 			showPostDialog();
 			return true;
@@ -332,4 +315,20 @@ public class WallActivity extends Activity {
 		Intent i = new Intent(this, LoginActivity.class);
 		startActivity(i);
 	}
+
+	@Override
+	public void onLocationChanged(Location location) {
+		Log.v("Location", "Updated location: " + location);
+		updateCircle(location);
+		populateData();
+	}
+
+	@Override
+	public void onProviderDisabled(String provider) {}
+
+	@Override
+	public void onProviderEnabled(String provider) {}
+
+	@Override
+	public void onStatusChanged(String provider, int status, Bundle extras) {}
 }

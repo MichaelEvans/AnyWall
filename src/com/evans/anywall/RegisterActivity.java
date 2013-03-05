@@ -145,11 +145,12 @@ public class RegisterActivity extends Activity {
 			mEmailView.setError(getString(R.string.error_field_required));
 			focusView = mEmailView;
 			cancel = true;
-		} else if (!mEmail.contains("@")) {
-			mEmailView.setError(getString(R.string.error_invalid_email));
-			focusView = mEmailView;
-			cancel = true;
 		}
+//		else if (!mEmail.contains("@")) {
+//			mEmailView.setError(getString(R.string.error_invalid_email));
+//			focusView = mEmailView;
+//			cancel = true;
+//		}
 
 		if (cancel) {
 			// There was an error; don't attempt login and focus the first
@@ -215,8 +216,8 @@ public class RegisterActivity extends Activity {
 		protected Boolean doInBackground(Void... params) {
 			ParseUser user = new ParseUser();
 			user.setUsername(mEmail);
-			user.setPassword(mEmail);
-			user.setEmail(mEmail);
+			user.setPassword(mPassword);
+			//user.setEmail(mEmail);
 			try{
 				user.signUp();
 			}catch (ParseException e) {
