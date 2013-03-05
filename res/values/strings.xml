@@ -14,5 +14,7 @@
     <string name="register">Register</string>
     <string name="login">Log In</string>
     <string name="menu_refresh">Refresh</string>
+    <string name="tagline">The world is your wall</string>
+    <string name="map_pin_icon">Map Pin Icon</string>
 
 </resources>

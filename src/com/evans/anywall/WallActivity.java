@@ -9,7 +9,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -34,7 +33,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.FindCallback;
-import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
@@ -51,7 +49,6 @@ public class WallActivity extends Activity implements LocationListener{
 	private Circle mCircle;
 	private HashMap<Post, Marker> mMarkers;
 	private LocationManager mLocationManager;
-	private LocationListener mLocationListener;
 	private PostListAdapter arrayAdapter;
 	
 	@Override
@@ -69,17 +66,6 @@ public class WallActivity extends Activity implements LocationListener{
 		mMap = mMapFragment.getMap();
 		mMap.setMyLocationEnabled(true);
 		mMarkers = new HashMap<Post, Marker>();
-
-		String appId = getResources().getString(R.string.app_id);
-		String clientKey = getResources().getString(R.string.client_key);
-		Parse.initialize(this, appId, clientKey);
-
-		ParseUser currentUser = ParseUser.getCurrentUser();
-		if (currentUser == null) {
-			Intent i = new Intent(this, LoginActivity.class);
-			startActivity(i);
-			finish();
-		}
 
 		// Acquire a reference to the system Location Manager
 		mLocationManager = (LocationManager) this
@@ -235,7 +221,7 @@ public class WallActivity extends Activity implements LocationListener{
 		// Handle item selection
 		switch (item.getItemId()) {
 		case R.id.menu_refresh:
-			//refreshData();
+			populateData();
 			return true;
 		case R.id.menu_post:
 			showPostDialog();
@@ -312,7 +298,7 @@ public class WallActivity extends Activity implements LocationListener{
 
 	private void logout() {
 		ParseUser.logOut();
-		Intent i = new Intent(this, LoginActivity.class);
+		Intent i = new Intent(this, LoginOrRegisterActivity.class);
 		startActivity(i);
 	}
 
