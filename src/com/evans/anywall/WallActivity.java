@@ -50,7 +50,8 @@ public class WallActivity extends Activity implements LocationListener{
 	private HashMap<Post, Marker> mMarkers;
 	private LocationManager mLocationManager;
 	private PostListAdapter arrayAdapter;
-	
+	private MenuItem refreshItem; 
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 
@@ -86,7 +87,7 @@ public class WallActivity extends Activity implements LocationListener{
 	private void updateCircle(Location location) {
 		LatLng latlng = new LatLng(location.getLatitude(),
 				location.getLongitude());
-		
+
 		CircleOptions circleOptions = new CircleOptions().center(latlng)
 				.fillColor(0x330000FF)
 				.strokeColor(0x770000FF)
@@ -113,10 +114,11 @@ public class WallActivity extends Activity implements LocationListener{
 				new ParseGeoPoint(location.getLatitude(), location
 						.getLongitude()), 100000);
 		//final ArrayList<Post> posts = new ArrayList<Post>();
-		//		for (Marker m : mMarkers) {
-		//			m.remove();
-		//		}
-		
+		for (Post p : mMarkers.keySet()) {
+			Marker m = mMarkers.get(p);
+			m.remove();
+		}
+
 		query.include("user");
 		query.findInBackground(new FindCallback() {
 			public void done(List<ParseObject> pointList, ParseException e) {
@@ -184,12 +186,6 @@ public class WallActivity extends Activity implements LocationListener{
 						mMarkers.remove(p);
 					}
 
-					//					if(isWithin(75, newPost.getLatitude(), newPost.getLongitude())){ //only show items within 75 meters
-					//						posts.add(newPost);
-					//					}
-
-					//					mMarkers.add(marker);
-
 					Log.d("score", "Retrieved " + pointList.size() + " points");
 					Log.e("WallActivity", "Adding post in range " + postsInRange.size());
 					arrayAdapter.clear();
@@ -201,18 +197,14 @@ public class WallActivity extends Activity implements LocationListener{
 				// updateMarkers(getLastLocation());
 			}
 		});
-		//		arrayAdapter = new PostListAdapter(
-		//				WallActivity.this, postsInRange);
-		//Log.w("WallActivity", "Posts in range " + postsInRange);
-
-		//postList.setAdapter(arrayAdapter);
-
+		refreshItem.setActionView(null);
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.activity_wall, menu);
+		refreshItem = menu.findItem(R.id.menu_refresh);
 		return true;
 	}
 
@@ -222,6 +214,7 @@ public class WallActivity extends Activity implements LocationListener{
 		switch (item.getItemId()) {
 		case R.id.menu_refresh:
 			populateData();
+			item.setActionView(R.layout.actionbar_indeterminate_progress);
 			return true;
 		case R.id.menu_post:
 			showPostDialog();
