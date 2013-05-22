@@ -15,6 +15,7 @@ import android.content.IntentFilter;
 import android.location.Location;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
@@ -29,6 +30,7 @@ import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.LocationClient;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationClient.OnAddGeofencesResultListener;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationStatusCodes;
@@ -56,6 +58,8 @@ GooglePlayServicesClient.OnConnectionFailedListener,
 LocationListener,
 OnAddGeofencesResultListener{
 
+	public static final int UPDATE_INTERVAL_IN_SECONDS = 5;
+	
 	private static final long SECONDS_PER_HOUR = 60;
 	private static final long MILLISECONDS_PER_SECOND = 1000;
 	private static final long GEOFENCE_EXPIRATION_IN_HOURS = 12;
@@ -63,6 +67,8 @@ OnAddGeofencesResultListener{
 			GEOFENCE_EXPIRATION_IN_HOURS *
 			SECONDS_PER_HOUR *
 			MILLISECONDS_PER_SECOND;
+	private static final long UPDATE_INTERVAL =
+            MILLISECONDS_PER_SECOND * UPDATE_INTERVAL_IN_SECONDS;
 
 	private ListView postList;
 	private GoogleMap mMap;
@@ -142,6 +148,10 @@ OnAddGeofencesResultListener{
 	}
 
 	protected void onStop() {
+		if (mLocationClient.isConnected()) {
+			mLocationClient.removeLocationUpdates(this);
+            //stopPeriodicUpdates();
+        }
 		mLocationClient.disconnect();
 		super.onStop();
 		// mLocationManager.removeUpdates(this);
@@ -191,9 +201,6 @@ OnAddGeofencesResultListener{
 				p.getLongitude(), 25, GEOFENCE_EXPIRATION_TIME, Geofence.GEOFENCE_TRANSITION_ENTER |
 				Geofence.GEOFENCE_TRANSITION_EXIT);
 		//add marker to map
-
-
-
 		return geo.toGeofence();
 
 	}
@@ -412,15 +419,6 @@ OnAddGeofencesResultListener{
 		return distance <= meters;
 	}
 
-	//	private Location getLastLocation() {
-	//		Criteria criteria = new Criteria();
-	//		criteria.setAccuracy(Criteria.ACCURACY_FINE);
-	//		String provider = mLocationManager
-	//				.getBestProvider(new Criteria(), true);
-	//		Location location = mLocationManager.getLastKnownLocation(provider);
-	//		return location;
-	//	}
-
 	private void logout() {
 		ParseUser.logOut();
 		Intent i = new Intent(this, LoginOrRegisterActivity.class);
@@ -437,22 +435,30 @@ OnAddGeofencesResultListener{
 
 	@Override
 	public void onConnected(Bundle dataBundle) {
-		Toast.makeText(this, "Connected", Toast.LENGTH_SHORT).show();
+		//Toast.makeText(this, "Connected", Toast.LENGTH_SHORT).show();
 		Location location = mLocationClient.getLastLocation();
 		if(location != null)
 			updateCircle(location);
 		populateData();
+		
+		//start locationupdates
+		LocationRequest mLocationRequest = new LocationRequest();
+		mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+		mLocationRequest.setInterval(UPDATE_INTERVAL);
+		mLocationRequest.setFastestInterval(MILLISECONDS_PER_SECOND);
+		mLocationClient.requestLocationUpdates(mLocationRequest, this);
+		Log.i("LocationManager", "Start updates");
 	}
 
 	@Override
 	public void onDisconnected() {
-
+		
 	}
 
 	@Override
 	public void onLocationChanged(Location location) {
+		Log.i("Location", "Location updated!");
 		updateCircle(location);
-
 	}
 
 	@Override
