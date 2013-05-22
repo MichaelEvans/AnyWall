@@ -23,6 +23,9 @@ import android.widget.ListView;
 
 import com.evans.anywall.adapter.PostListAdapter;
 import com.evans.anywall.model.Post;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesClient;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -58,6 +61,9 @@ public class WallActivity extends Activity implements LocationListener{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_wall);
 
+		int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+		//check availability.
+		
 		postList = (ListView) findViewById(R.id.postList);
 		arrayAdapter = new PostListAdapter(
 				WallActivity.this, new ArrayList<Post>());
@@ -197,7 +203,7 @@ public class WallActivity extends Activity implements LocationListener{
 				// updateMarkers(getLastLocation());
 			}
 		});
-		refreshItem.setActionView(null);
+		//refreshItem.setActionView(null);
 	}
 
 	@Override
