@@ -11,6 +11,7 @@ public class Post extends ParseObject{
 	private String body;
 	private ParseUser user;
 	private ParseGeoPoint location;
+	private String id;
 	
 	public Post() {
 		super(className);
@@ -21,6 +22,7 @@ public class Post extends ParseObject{
 		this.body = obj.getString("body");
 		this.user = obj.getParseUser("user");
 		this.location = obj.getParseGeoPoint("location");
+		this.id = obj.getObjectId();
 	}
 	public String getBody() {
 		return body;
@@ -72,6 +74,10 @@ public class Post extends ParseObject{
 	public String toString() {
 		return "Post [body=" + body + ", user=" + user + ", location="
 				+ location + "]";
+	}
+
+	public String getId() {
+		return id;
 	}
 	
 }

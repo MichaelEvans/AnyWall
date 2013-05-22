@@ -1,13 +1,12 @@
 package com.evans.anywall;
 
-import com.parse.Parse;
-import com.parse.ParseUser;
-
-import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
-import android.view.Menu;
+import android.os.Bundle;
 import android.view.View;
+
+import com.parse.Parse;
+import com.parse.ParseUser;
 
 public class LoginOrRegisterActivity extends Activity {
 
